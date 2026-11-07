@@ -2,7 +2,7 @@
 
 - **VP Chat** (Community) lists the weekly table and every table in your library whose scores
   have been asked of VPC, with your own usernames flagged.
-- **VPC Weekly** (Community) holds only this week's table. Core tags that game ``vp-weekly``
+- **VPC Weekly** (Community) holds only this week's table. Core tags that game ``vpc-weekly``
   and moves the tag when the week changes, because VPinFE tags the game of every row of a
   tagged list, which is why the tag cannot live on VP Chat.
 - Scores are asked of VPC one game at a time, as they are wanted: a game browsed to, a game

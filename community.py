@@ -1,5 +1,5 @@
 """What the person and a theme see: the VP Chat list, the small VPC Weekly list that carries
-the ``vp-weekly`` tag, and the ``vpc`` and ``vpc_weekly`` entries.
+the ``vpc-weekly`` tag, and the ``vpc`` and ``vpc_weekly`` entries.
 
 VPinFE tags the game of every row of a tagged list, so the tag lives on its own list that
 holds only this week's game. VP Chat holds every game with scores.
@@ -16,7 +16,7 @@ from . import boards, client, settings
 
 logger = logging.getLogger("vpinfe.ext.vpc_vpinfe")
 
-TAG = "vp-weekly"
+TAG = "vpc-weekly"
 WEEKLY = "weekly"
 CHAT = "vp_chat"
 WEEKLY_ENTRY = "vpc_weekly"

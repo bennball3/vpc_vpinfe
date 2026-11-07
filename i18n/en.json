@@ -1,6 +1,6 @@
 {
   "name": "Virtual Pinball Chat",
-  "description": "Virtual Pinball Chat scores for your tables, with your own username flagged, and the weekly table tagged vp-weekly.",
+  "description": "Virtual Pinball Chat scores for your tables, with your own username flagged, and the weekly table tagged vpc-weekly.",
   "settings.label": "Virtual Pinball Chat",
   "settings.usernames.label": "Your VPC Usernames",
   "settings.usernames.help": "Your Virtual Pinball Chat usernames, separated by commas. Scores by them are flagged in VP Chat and in the scores a theme reads.",
