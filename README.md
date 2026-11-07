@@ -11,7 +11,8 @@ Two entries under **Community**:
 - **VP Chat** lists the weekly table and every table in your library whose scores have been
   asked of VPC. Columns show the top score and player, a dot under **Scored** where one of your
   usernames has a score on the table, your best score and rank, and when it was last checked.
-  Scores are shown with thousands separators. There is an **All Tables** view and a **My Scores**
+  Scores are shown with thousands separators, and the weekly table (a dot under **This Week**) is
+  listed first. There is an **All Tables** view and a **My Scores**
   view. Click a row for the boards: one section per VPC version of the table, showing the top 10
   and then **your own line with the lines around it**, so a rank of 87 is visible in context.
   Your lines are marked with a star.
@@ -29,7 +30,7 @@ There is no crawl of VPC. Scores are asked for one game at a time, as they are w
 | You play a game | It is marked, and asked for again the next time you browse to it at least 5 minutes later (VPC scores are posted by hand, so right at exit is too early) |
 | **Check Now** (title menu) | Reads the week, then queues every game already held, one after another |
 | **Refresh Scores** (row menu) | Queues the selected games |
-| The weekly table | Read when VPinFE starts and then at the **Check the Weekly Table** interval |
+| The weekly table | The last week is held between runs, so it is there at once; VPC is asked in the background a few seconds after VPinFE starts, then at the **Check the Weekly Table** interval |
 
 A game is searched as `Name (Maker Year)`, such as `24 (Stern 2009)`, then by name alone, and
 only versions that are one of the game's VPS table files are kept. Requests are made by one

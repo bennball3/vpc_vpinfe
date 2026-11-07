@@ -22,6 +22,8 @@ PACE_SECONDS = 1.0  # between two games asked of VPC
 RETRY_SECONDS = 15 * 60  # before a game VPC could not answer for is asked again
 IDLE_SECONDS = 30  # the worker leaves after this long with nothing to do
 WEEK_SLACK = 120  # core's ticks are not exact
+LAUNCH_DELAY = 8.0  # before the launch read, so the VPS catalog is ready and core is not
+LAUNCH_WAIT = 10.0  # longest core's first read waits for the launch read
 
 
 class Refresher:
@@ -36,6 +38,7 @@ class Refresher:
         self._thread: threading.Thread | None = None
         self._week_read = False  # whether the week was read in this run
         self._week_lock = threading.Lock()
+        self._launch: threading.Timer | None = None
 
     # --- the week ---------------------------------------------------------------------
 
@@ -48,12 +51,36 @@ class Refresher:
             return False
         return now - self._store.week_read_at >= interval - WEEK_SLACK
 
+    def start_launch_check(self, delay: float = LAUNCH_DELAY) -> None:
+        """Read the week once VPinFE has settled, without waiting for core's first read of
+        the list. What was held from the last run answers until it lands."""
+        def check() -> None:
+            try:
+                self.ensure_week(force=True)
+            except Unavailable as exc:
+                logger.warning("The week could not be read at launch: %s", exc)
+            except Exception:
+                logger.exception("The week could not be read at launch")
+
+        self._launch = threading.Timer(delay, check)
+        self._launch.daemon = True
+        self._launch.start()
+
     def ensure_week(self, force: bool = False) -> dict | None:
-        """This week as held, read from VPC first when it is due (or `force`). Raises
-        Unavailable where VPC is due to be asked and does not answer."""
+        """This week as held, read from VPC first when it is due (or `force`). Where VPC
+        does not answer, the week held from before is answered; Unavailable is raised only
+        for a forced read or when nothing is held."""
+        launch = self._launch
+        if launch is not None and launch.is_alive()                 and threading.current_thread() is not launch:
+            launch.join(LAUNCH_WAIT)
         with self._week_lock:
             if force or self.week_due():
-                self._read_week()
+                try:
+                    self._read_week()
+                except Unavailable as exc:
+                    if force or self._store.week() is None:
+                        raise
+                    logger.warning("Using the week held from before: %s", exc)
             return self._store.week()
 
     def _read_week(self) -> None:

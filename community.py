@@ -62,7 +62,7 @@ def install(ctx, store, refresher) -> None:
         yours = boards.mine(versions, flagged)
         return {
             "id": vps_id, "vps_id": vps_id, "name": name,
-            "weekly": "this_week" if weekly else "",
+            "weekly": "●" if weekly else "",
             # Text, not numbers: a number column cannot draw thousands separators.
             "top_score": client.grouped(best["score"]) if best else "",
             "top_player": best["player"] if best else "",
@@ -155,7 +155,7 @@ def install(ctx, store, refresher) -> None:
 
     chat_columns = [
         {"field": "vps_id", "kind": "game", "name_from": "name"},
-        {"field": "weekly", "kind": "state", "states": {"this_week": {"tier": "on"}}},
+        {"field": "weekly"},
         {"field": "top_score"},
         {"field": "top_player"},
         {"field": "mine"},
@@ -168,7 +168,8 @@ def install(ctx, store, refresher) -> None:
         CHAT, chat_rows, title="VP Chat", area="community", icon="leaderboard",
         columns=chat_columns,
         views=[
-            {"key": "all", "sort": [{"field": "fetched", "desc": True}]},
+            {"key": "all", "sort": [{"field": "weekly", "desc": True},
+                              {"field": "fetched", "desc": True}]},
             {"key": "mine", "columns": ["vps_id", "my_best", "my_rank", "entries", "top_score"],
              "sort": [{"field": "my_rank"}]},
         ],

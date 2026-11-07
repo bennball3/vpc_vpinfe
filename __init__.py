@@ -49,3 +49,4 @@ def register(ctx):
 
     ctx.events.subscribe(PLAY_RECORDED, played)
     community.install(ctx, store, refresher)
+    refresher.start_launch_check()
