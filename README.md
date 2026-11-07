@@ -1,90 +1,105 @@
 # Virtual Pinball Chat for VPinFE
 
-A VPinFE 3 extension that tags the current [Virtual Pinball Chat](https://virtualpinballchat.com)
-weekly competition table with `vp-weekly` and shows that week's scores.
+A VPinFE 3 extension for [Virtual Pinball Chat](https://virtualpinballchat.com) (VPC): the weekly
+competition, and the scores VPC holds for the tables in your library, with your own usernames
+flagged.
 
 ## What it does
 
-- Reads the current week from `https://virtualpinballchat.com/vpc/api/v1/currentWeek`.
-- Shows it under **Community > VPC Weekly**: the game, the week number, when the week ends and
-  a link to the table download.
-- Declares the list with `tag="vp-weekly"`, so VPinFE itself puts the tag on that game in your
-  library. Core reads the list shortly after startup and every 30 minutes, and takes the tag off
-  a game once it is no longer the weekly table, so only one game carries it at a time. The
-  extension never writes tags itself.
-- Click the week's row and a pane opens beside it with the week's leaderboard (rank and
-  player beside their score, with thousands separators) and the week's details: the game, when
-  it starts and ends, and a link to download the table.
-- Hands the week and its scores to the frontend theme, on the weekly game (see below).
+Two entries under **Community**:
 
-VPC's `vpsId` is the VPS id of one table file (a release), not of the game. The extension
-looks it up in the VPS catalog VPinFE already keeps on disk: it finds the game from VPC's table
-name ("Medieval Madness (Williams 1997)") and keeps it only if that release is one of the
-game's table files. No extra download is made. The tag goes on the whole game, so it is there
-whichever version of the table you have. If the catalog can't place the release, the row still
-shows but no game is tagged.
+- **VP Chat** lists the weekly table and every table in your library whose scores have been
+  asked of VPC. Columns show the top score and player, a dot under **Scored** where one of your
+  usernames has a score on the table, your best score and rank, and when it was last checked.
+  Scores are shown with thousands separators. There is an **All Tables** view and a **My Scores**
+  view. Click a row for the boards: one section per VPC version of the table, showing the top 10
+  and then **your own line with the lines around it**, so a rank of 87 is visible in context.
+  Your lines are marked with a star.
+- **VPC Weekly** holds only this week's table. Core tags that game `vp-weekly` and moves the tag
+  when the week changes. The tag lives on its own list because VPinFE tags the game of *every*
+  row of a tagged list, which would tag every table in VP Chat.
 
-If VPC has no table for the week, the list is empty and no game is tagged. If the site does
-not answer, the list says so and the last good read (and its tag) stays.
+## How scores are collected
 
-## Scores and refreshing
+There is no crawl of VPC. Scores are asked for one game at a time, as they are wanted:
 
-The scores are downloaded when VPinFE starts (with the weekly read, about 15 seconds in) and
-again every 30 minutes. To get the latest straight away, open **Community > VPC Weekly** and
-press **Refresh**. Opening the page also reads them again, and the page shows the last good
-read at once while it does.
+| When | What happens |
+|---|---|
+| You browse to a game | Its scores are used from the cache. If they were never fetched, or are older than **Keep Table Scores For**, one request for that game is queued |
+| You play a game | It is marked, and asked for again the next time you browse to it at least 5 minutes later (VPC scores are posted by hand, so right at exit is too early) |
+| **Check Now** (title menu) | Reads the week, then queues every game already held, one after another |
+| **Refresh Scores** (row menu) | Queues the selected games |
+| The weekly table | Read when VPinFE starts and then at the **Check the Weekly Table** interval |
 
-## A collection of the weekly game
+A game is searched as `Name (Maker Year)`, such as `24 (Stern 2009)`, then by name alone, and
+only versions that are one of the game's VPS table files are kept. Requests are made by one
+worker, a second apart. A game VPC does not know is remembered as having no scores for the same
+time.
 
-The `vp-weekly` tag works anywhere a tag filter does. To have the weekly table on the frontend
-as its own collection:
+Scores are kept in full (not just the top 10), and between runs, in `cache/scores.json` in this
+folder. Delete it to start again.
 
-1. In the Manager, open **Library > Collections** and choose **New collection**.
-2. Make it **Smart**, so it fills itself from its rules.
-3. Add a rule on **Tags** that matches `vp-weekly`, and save.
+## Settings
 
-The collection then always holds the current weekly game, and follows it to the next one when
-the week changes, with nothing to edit by hand.
+Under **Settings > Extensions**:
+
+- **Your VPC Usernames**: comma separated. Matched ignoring case.
+- **Check the Weekly Table**: only when VPinFE starts, or every 30 minutes (the default), hour,
+  3, 6 or 12 hours, or day. Core reads on a 30 minute tick, so a longer wait skips ticks.
+- **Keep Table Scores For**: forever (the default), or 1, 3, 7 or 30 days, for every table that is not the
+  weekly one.
 
 ## For theme authors
 
-On the weekly game, a theme reads `entry.ext.vpc_weekly`. It is empty on every other game, so
-`if (entry.ext.vpc_weekly)` is enough to tell whether a game is this week's table:
+On the weekly game, `entry.ext.vpc_weekly` (empty on every other game):
 
 ```json
-{
-  "week": 334,
-  "starts": "2026-11-02",
-  "ends": "2026-11-08",
-  "table": "Medieval Madness (Williams 1997)",
-  "vps_release_id": "zbyQ01wi3L",
-  "page": "https://vpuniverse.com/files/file/...",
-  "scores": [
-    {"id": "…", "rank": 1, "player": "…", "avatar": "https://…", "score": 129846820,
-     "points": 12, "posted": "2026-11-06T21:35:43"}
-  ]
-}
+{"week": 334, "starts": "2026-11-02", "ends": "2026-11-08",
+ "table": "Medieval Madness (Williams 1997)", "vps_release_id": "zbyQ01wi3L", "page": "https://...",
+ "scores": [{"rank": 1, "player": "...", "score": 129846820, "posted": "2026-11-06T21:35:47",
+             "url": "https://discord.com/...", "mine": false}]}
 ```
 
-`score` is a plain number, for the theme to format as it likes. It is refreshed whenever the
-list is read. The tag is in `game.derived_tags` for a theme
-that wants only that.
+On any game with held scores, `entry.ext.vpc`:
+
+```json
+{"versions": [{"vps_release_id": "...", "version": "1.0.1", "authors": "...", "page": "https://...",
+               "entries": 29, "scores": [{"rank": 1, "player": "...", "score": 1, "posted": "...",
+                                          "url": "...", "mine": false}]}],
+ "mine": [{"player": "...", "score": 1, "rank": 51, "of": 101, "version": "1.0.1",
+           "vps_release_id": "..."}],
+ "fetched": "2026-11-07T15:00:00Z"}
+```
+
+Each version's `scores` holds the top 25 plus your own lines, each with its true `rank`. The
+version 0.1 weekly scores' `avatar`, `points` and `id` are no longer provided.
+
+A collection of the weekly game still works as before: a Smart collection with a **Tags** rule
+matching `vp-weekly`.
 
 ## Capabilities
 
 | Capability | Why |
 |---|---|
-| `net:outbound` | To fetch the current week and its scores from virtualpinballchat.com |
-| `ui:mount` | To show the VPC Weekly list and its scores pane under Community. The list is what carries the tag |
+| `net:outbound` | To read the week and each game's scores from virtualpinballchat.com |
+| `ui:mount` | For the VP Chat and VPC Weekly lists under Community |
+| `config:own` | For the settings above |
 
 | Scope | Why |
 |---|---|
-| `games:read` | To look up which game VPC's table file belongs to in VPinFE's VPS catalog (`vps_settle`, `vps_releases`). It changes nothing in your library |
+| `games:read` | To find which game a VPC table belongs to in VPinFE's VPS catalog. It changes nothing in your library |
+
+## Code layout
+
+`__init__.py` wires it up; `client.py` speaks to VPC; `library.py` finds the game; `store.py`
+keeps scores in memory and on disk; `refresher.py` decides when to ask; `boards.py` ranks scores
+and finds your lines; `community.py` draws the lists and theme entries.
 
 ## Install
 
 Put this folder at `extensions/vpc_vpinfe` under the VPinFE config directory (the folder name
-must stay `vpc_vpinfe`), restart VPinFE, and accept it under **Settings > Extensions**.
+must stay `vpc_vpinfe`), restart VPinFE, and accept it under **Settings > Extensions**. It asks
+again after an upgrade from 0.1 because of the new `config:own` capability.
 
 Check it with:
 
