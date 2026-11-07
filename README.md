@@ -6,7 +6,9 @@ flagged.
 
 ## What it does
 
-Two entries under **Community**:
+![VP Chat in VPinFE Manager: the weekly table listed first, with the week's board open beside it](docs/vp-chat.webp)
+
+In the Manager, two entries under **Community**:
 
 - **VP Chat** lists the weekly table and every table in your library whose scores have been
   asked of VPC. Columns show the top score and player, a dot under **Scored** where one of your
@@ -19,6 +21,12 @@ Two entries under **Community**:
 - **VPC Weekly** holds only this week's table. Core tags that game `vp-weekly` and moves the tag
   when the week changes. The tag lives on its own list because VPinFE tags the game of *every*
   row of a tagged list, which would tag every table in VP Chat.
+
+**Scores for your themes.** Every game a theme draws gets its VPC leaderboards as
+`entry.ext.vpc`: each version's top scores, with your own rank and best score picked out. The
+weekly table also gets `entry.ext.vpc_weekly`, which holds the week and its board. A theme can
+then show a table's leaderboard, your standing and the weekly competition right in the frontend,
+with no setup of its own. See [For theme authors](#for-theme-authors) for the data.
 
 ## How scores are collected
 
