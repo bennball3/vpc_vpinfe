@@ -41,9 +41,6 @@ holds this week's table. See [Collect the weekly table](#collect-the-weekly-tabl
 2. Restart VPinFE.
 3. In VPinFE Manager, go to **Settings > Extensions** and accept the extension.
 
-If you're upgrading from version 0.1, VPinFE asks you to accept the extension again, because it
-now needs the `config:own` permission.
-
 To check that VPinFE can load the extension, run this from the extension folder:
 
 ```bash
@@ -133,9 +130,6 @@ The extension adds two fields to the game entries a theme receives.
  "scores": [{"rank": 1, "player": "...", "score": 129846820, "posted": "2026-11-06T21:35:47",
              "url": "https://discord.com/...", "mine": false}]}
 ```
-
-Version 0.1 also included `avatar`, `points` and `id` in the weekly scores. These have been
-removed.
 
 ## Permissions
 

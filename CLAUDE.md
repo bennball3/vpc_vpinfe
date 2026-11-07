@@ -81,3 +81,6 @@ The README was rewritten to read naturally, following the Google developer docum
 style. Keep it that way: address the reader as "you", use active voice and sentence-case
 headings, bold only UI labels, use numbered lists for steps, give every image alt text, and
 avoid em dashes. Screenshots go in `docs/` as `.webp`.
+
+The README describes the extension as it is now. Don't add version history, upgrade notes or
+"earlier versions did X" lines; that belongs in commit messages.
