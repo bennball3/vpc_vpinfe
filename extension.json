@@ -1,0 +1,11 @@
+{
+  "name": "vpc_vpinfe",
+  "display_name": "Virtual Pinball Chat",
+  "version": "0.1.0",
+  "author": "bennball3",
+  "source": "https://github.com/bennball3/vpc_vpinfe",
+  "home": "https://virtualpinballchat.com",
+  "requires_platform": 1,
+  "scopes": ["games:read"],
+  "capabilities": ["net:outbound", "ui:mount"]
+}

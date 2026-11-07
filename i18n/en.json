@@ -1,0 +1,20 @@
+{
+  "name": "Virtual Pinball Chat",
+  "description": "Tags the current Virtual Pinball Chat weekly table with vp-weekly and shows its scores.",
+  "list.weekly.title": "VPC Weekly",
+  "list.weekly.column.vps_id.header": "Game",
+  "list.weekly.column.week.header": "Week",
+  "list.weekly.column.ends.header": "Ends",
+  "list.weekly.column.page.header": "Table Download",
+  "list.weekly.column.page.help": "Where to get the table this week is played on",
+  "pane.under": "Week {week}",
+  "pane.scores": "Scores",
+  "pane.scores.none": "No scores yet",
+  "pane.score.label": "{rank}. {player}",
+  "pane.week": "This Week",
+  "pane.game": "Game",
+  "pane.starts": "Starts",
+  "pane.ends": "Ends",
+  "pane.table": "Table",
+  "pane.table.open": "Download the Table"
+}
